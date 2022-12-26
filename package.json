@@ -8,7 +8,8 @@
     "build": "webpack --mode=production",
     "eslint:test": "eslint src --ext .js,.ts,.tsx",
     "eslint:fix": "eslint --fix src --ext .js,.ts,.tsx",
-    "clean": "rd /s /q dist"
+    "clean": "rd /s /q dist",
+    "prepare": "husky install"
   },
   "keywords": [
     "webpack",
