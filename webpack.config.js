@@ -1,6 +1,10 @@
 const path = require('path')
-const {CleanWebpackPlugin} = require('clean-webpack-plugin')
-const HTMLWebpackPlugin = require('html-webpack-plugin')
+const {CleanWebpackPlugin} = require('clean-webpack-plugin');
+const HTMLWebpackPlugin = require('html-webpack-plugin');
+const TerserPlugin = require("terser-webpack-plugin");
+const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
+const CompressionPlugin = require("compression-webpack-plugin");
+const ErrorOverlayPlugin = require('error-overlay-webpack-plugin');
 
 module.exports = {
     entry: './src/index.tsx',
@@ -14,14 +18,31 @@ module.exports = {
     },
     plugins: [
         new HTMLWebpackPlugin({template: "./public/index.html"}),
-        new CleanWebpackPlugin()
+        new CleanWebpackPlugin(),
+        new ErrorOverlayPlugin(),
+        new BundleAnalyzerPlugin({
+           analyzerPort: 8001,
+           reportTitle: "Bundle Analyzer"
+        }),
+        new CompressionPlugin({    
+          test: /\.js(\?.*)?$/i,    
+          filename: "[path][query]",    
+          algorithm: "gzip",    
+          deleteOriginalAssets: false,  
+        })
     ],
     module: {
         rules: [
-            {
-                test: /\.(jpg|jpeg|png|svg)/,
-                use: ['file-loader']
-            },
+          {
+            test: /\.(png|svg|jpg|jpeg|gif|ico)$/i,
+            loader: 'file-loader',
+              options: {
+                name: '[name].[ext]',
+                outputPath:"assets/", 
+                publicPath: "./src/sssets",
+                esModule: false
+              }
+          },
             {
                 test: /\.(ts|js)x?$/,
                 exclude: /node_modules/,
@@ -37,6 +58,14 @@ module.exports = {
                 },
               },
         ]
+    },
+    optimization: {
+      minimize: true,
+      concatenateModules: true,
+      flagIncludedChunks: true,
+      mangleWasmImports: true,
+      mangleExports: 'size',
+      minimizer: [new TerserPlugin()],
     },
     resolve: {
         extensions: ['.ts', '.tsx', '.js'],

@@ -1,15 +1,16 @@
 import styled from 'styled-components'
 
 export const Container = styled.header`
+  align-items: center;
   display: flex;
-  justify-content: space-between;
-  margin: 0 auto;
-  padding: 50px 0 30px 0;
-  width: 90%;
+  height: 100vh;
+  justify-content: center;
+  width: 100vw;
 `
 
 export const Title = styled.h1`
-  color: gray;
-  font-size: 26px;
-  letter-spacing: 2px;
+  color: black;
+  font-size: 44px;
+  font-weight: 2000;
+  letter-spacing: 3px;
 `
