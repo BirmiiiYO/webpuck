@@ -1,21 +1,13 @@
 {
   "presets": [
     "@babel/preset-typescript",
+    "@babel/preset-env",
     [
       "@babel/preset-react",
       {
-        "pragma": "dom", 
-        "pragmaFrag": "DomFrag", 
-        "throwIfNamespace": false, 
-        "runtime": "classic" 
-      }
-    ],
-    [
-      "@babel/preset-env",
-      {
-        "useBuiltIns": "entry",
-        "corejs": "3.22"
+        "runtime": "automatic"
       }
     ]
-  ]
+  ],
+  "plugins": ["babel-plugin-styled-components"]
 }

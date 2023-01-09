@@ -1,13 +1,11 @@
-import React from 'react'
+import React from 'react';
 
-import { Header } from './components/Header'
-
-const App = () => {
+function App() {
   return (
-    <div>
-      <Header />
-    </div>
-  )
+   <>
+    <h1>init components</h1>
+    <p>process var: {process.env.NOT_SECRET_CODE}</p></>
+  );
 }
 
-export default App
+export default App;

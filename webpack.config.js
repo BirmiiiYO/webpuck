@@ -1,77 +1,51 @@
 const path = require('path')
-const {CleanWebpackPlugin} = require('clean-webpack-plugin');
-const HTMLWebpackPlugin = require('html-webpack-plugin');
-const TerserPlugin = require("terser-webpack-plugin");
-const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
-const CompressionPlugin = require("compression-webpack-plugin");
-const ErrorOverlayPlugin = require('error-overlay-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+const Dotenv = require('dotenv-webpack');
 
 module.exports = {
-    entry: './src/index.tsx',
-    devtool: 'inline-source-map',
-    output: {
-        path: path.resolve(__dirname, "dist"),
-        filename: "[name].[hash].js"
+  entry: './src/index.tsx',
+  output: {
+    filename: 'main.js',
+    path: path.resolve(__dirname, 'build'),
+  },
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: path.join(__dirname, 'public', 'index.html'),
+    }),
+    new CleanWebpackPlugin({
+      cleanAfterEveryBuildPatterns: ['static*.*', '!static1.js'],
+      verbose: true,
+    }),
+    new Dotenv(),
+  ],
+  devServer: {
+    static: {
+      directory: path.join(__dirname, 'build'),
     },
-    devServer: {
-        port: 3001
-    },
-    plugins: [
-        new HTMLWebpackPlugin({template: "./public/index.html"}),
-        new CleanWebpackPlugin(),
-        new ErrorOverlayPlugin(),
-        new BundleAnalyzerPlugin({
-           analyzerPort: 8001,
-           reportTitle: "Bundle Analyzer"
-        }),
-        new CompressionPlugin({    
-          test: /\.js(\?.*)?$/i,    
-          filename: "[path][query]",    
-          algorithm: "gzip",    
-          deleteOriginalAssets: false,  
-        })
-    ],
-    module: {
-        rules: [
+    port: 3000,
+  },
+  module: {
+    rules: [
+      {
+        test: /\.(js|jsx|ts|tsx)$/,
+        exclude: /node_modules/,
+        use: ['babel-loader'],
+      },
+      {
+        test: /\.(png|jpg|gif|webp)$/i,
+        use: [
           {
-            test: /\.(png|svg|jpg|jpeg|gif|ico)$/i,
-            loader: 'file-loader',
-              options: {
-                name: '[name].[ext]',
-                outputPath:"assets/", 
-                publicPath: "./src/sssets",
-                esModule: false
-              }
+            loader: 'url-loader',
+            options: {
+              limit: 8192,
+            },
           },
-            {
-                test: /\.(ts|js)x?$/,
-                exclude: /node_modules/,
-                use: {
-                  loader: "babel-loader",
-                  options: {
-                    presets: [
-                      "@babel/preset-env",
-                      "@babel/preset-react",
-                      "@babel/preset-typescript",
-                    ],
-                  },
-                },
-              },
-        ]
-    },
-    optimization: {
-      minimize: true,
-      concatenateModules: true,
-      flagIncludedChunks: true,
-      mangleWasmImports: true,
-      mangleExports: 'size',
-      minimizer: [new TerserPlugin()],
-    },
-    resolve: {
-        extensions: ['.ts', '.tsx', '.js'],
+        ],
       },
-      output: {
-        filename: 'bundle.js',
-        path: path.resolve(__dirname, 'dist'),
-      },
+    ],
+  },
+  resolve: {
+    extensions: ['*', '.js', '.jsx', '.ts', '.tsx'],
+  },
 }
